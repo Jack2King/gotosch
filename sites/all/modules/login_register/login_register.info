@@ -1,0 +1,5 @@
+name = Login register
+description = Integrate login and register in one page.
+package = Custom
+core = 7.x
+

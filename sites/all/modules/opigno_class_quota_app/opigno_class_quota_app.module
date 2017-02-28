@@ -1,0 +1,72 @@
+<?php
+/**
+ * @file
+ * Contains all hook_implementations and module specific functions.
+ */
+
+function opigno_class_quota_app_og_permission() {
+  return array(
+    'count class user for quota' => array(
+      'title' => t("Count user for quota"),
+    ),
+  );
+}
+
+function opigno_class_quota_app_form_alter(&$form, &$form_state, $form_id) {
+
+  $set_message = FALSE;
+  if (($form['#form_id'] == "views_form_og_massadd_block_1")) {
+    $node = node_load($form_state['build_info']['args'][0]->args[0]);
+    $set_message = TRUE;
+  }
+
+  if (($form['#form_id'] == "og_ui_add_users")) {
+    $node = node_load($form['membership_fields']['#entity']->gid);
+    $set_message = TRUE;
+  }
+
+  if (($form['#form_id'] == "og_massadd_massadd_form")) {
+    $node = node_load($form['group_ids']['#value'][0]);
+    $set_message = TRUE;
+  }
+
+  if ($set_message == TRUE) {
+    if (isset($node->class_quota)) {
+      $info = opigno_class_quota_app_students_info($node);
+      if (($info['places'] != -1) && ($info['places'] != NULL) && ($info['available_places'] <= 0)) {
+        drupal_set_message(t('This %type is full at the moment , it has at the moment %over more student(s) than quota', array(
+          '%type' => $node->type,
+          '%over' => $info['available_places'] * -1
+        )), 'warning',PASS_THROUGH);
+      }
+    }
+  }
+
+  if (isset($form_state['field']['og_membership_request'])) {
+    $node = node_load($form_state['og_membership']->gid);
+    $info = opigno_class_quota_app_students_info($node);
+    if (($info['places'] != -1) && ($info['places'] != NULL) && ($info['available_places'] <= 0)) {
+      unset($form['actions']['submit']);
+      unset($form['og_membership_request']);
+      drupal_set_title(t('This %type is full at the moment', array('%type' => $node->type)),PASS_THROUGH);
+    }
+  }
+}
+
+function opigno_class_quota_app_students_info($node) {
+  $node_id = $node->nid;
+  $group_members = opigno_get_users_in_group($node_id);
+  $students_number = 0;
+  foreach ($group_members AS $member) {
+    $user = user_load($member->uid);
+    if ((og_user_access('node',$node_id,'count class user for quota',$user))&&(!user_access("bypass node access",$user)))
+    {
+      $students_number++;
+    }
+  }
+  return array(
+    'places' => $node->class_quota[LANGUAGE_NONE][0]['value'],
+    'available_places' => $node->class_quota[LANGUAGE_NONE][0]['value'] - $students_number,
+    'students' => $students_number
+  );
+}

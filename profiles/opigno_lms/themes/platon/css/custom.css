@@ -1,0 +1,95 @@
+/* footer  
+.slim {
+  width: 25%;
+}
+#site-footer {
+  margin-left: 100px;
+  margin-right: 100px;
+}
+#copyright {
+  background-color: #444;
+}
+.slim ul li {
+  list-style: none;
+  padding: 5px;
+  font-size: 1.2em;
+}
+.slim p {
+  font-size: 1.2em;
+}
+.slim ul li a {
+  text-decoration: none;
+}
+.slim h4 {
+ font-size: 1.5em;
+}
+.region-footer-firstcolumn ul,.region-footer-secondcolumn ul {
+ padding-left: 0px;
+} */
+/* disuz */
+.disuz {
+  border-bottom: 1px solid #cccccc;
+  margin-bottom: 0.7em;
+  padding-bottom: 0.7em;
+  position: relative;
+}
+
+/* forum page style  */
+.forum-picture {
+  width: 10%;
+  float: left;
+}
+.forum-content {
+  width: 90%;
+  float: right;
+}
+.expandable-form-toggle,.expandable-form-toggle:before {
+  width: 1.4em;
+    height: 1.4em;
+    text-align: center;
+}
+.expandable-form-toggle {
+  float: right;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: .6em;
+    overflow: hidden;
+}
+
+.school {
+ padding-left: 0px;
+ padding-right: 0px;
+}
+
+/* relation institute */
+.field-name-field-schools .field-type-relation-endpoint table.tableheader-processed thead,
+.field-name-field-schools .field-type-relation-endpoint table.tableheader-processed tbody tr.odd,
+.field-name-field-schools .field-type-relation-endpoint table.tableheader-processed tbody tr.even td:last-child
+ {
+  display: none;
+}
+.field-name-field-schools .field-name-field-period .field-label,.field-name-field-schools .field-name-field-amount .field-label,.field-name-field-schools .field-name-field-highlists .field-label {
+  float: left;
+  width: 20%;
+}
+
+/* relation school */
+.field-name-field-institutes .field-type-relation-endpoint table.tableheader-processed thead,
+.field-name-field-institutes .field-type-relation-endpoint table.tableheader-processed tbody tr.odd,
+.field-name-field-institutes .field-type-relation-endpoint table.tableheader-processed tbody tr.even td:last-child
+ {
+  display: none;
+}
+.field-name-field-institutes .field-name-field-services .field-label,.field-name-field-institutes .field-name-field-period .field-label,.field-name-field-institutes .field-name-field-amount .field-label,.field-name-field-institutes .field-name-field-highlists .field-label {
+  float: left;
+  width: 20%;
+}
+.field-name-field-institutes .field-name-field-highlists .field-items {
+  width: 80%;
+}
+
+#site-content {
+ padding-left: 100px;
+ padding-right: 100px;
+}

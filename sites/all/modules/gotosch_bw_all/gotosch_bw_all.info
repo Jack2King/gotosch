@@ -1,0 +1,22 @@
+name = Gotosch Browsing Widget All
+description = Provides a single content area with multiple panels for adding and browsing content by content type.
+package = gotosch - Building blocks
+core = 7.x
+
+;dependencies[] = gotosch_groups
+dependencies[] = features
+;dependencies[] = og
+dependencies[] = quicktabs
+dependencies[] = quicktabs_tabstyles
+;dependencies[] = title
+
+features[features_api][] = api:2
+;features[field_base][] = title_field
+
+;files[] = includes/views/handlers/gotosch_bw_handler_node_partial_form.inc
+
+; Information added by Drupal.org packaging script on 2017-01-11
+version = "7.x-3.41"
+core = "7.x"
+;project = "gotosch_1"
+datestamp = "1484170689"

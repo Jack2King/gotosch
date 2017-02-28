@@ -1,0 +1,14 @@
+name = Opigno Course Quota App
+description = Opigno Course Quota App to alert an prevent users from requesting membership on full course
+core = 7.x
+package = Opigno Apps
+
+dependencies[] = opigno
+dependencies[] = number
+
+; Information added by Drupal.org packaging script on 2014-07-04
+version = "7.x-1.4"
+core = "7.x"
+project = "opigno_course_quota_app"
+datestamp = "1404482029"
+

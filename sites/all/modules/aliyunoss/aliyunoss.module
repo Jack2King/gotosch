@@ -1,0 +1,40 @@
+<?php
+include_once 'sdk/autoload.php';
+
+/**
+ * @file
+ * Provide Aliyun OSS stream wrapper
+ */
+
+/**
+ * Implements hook_stream_wrappers().
+ *
+ * Create a stream wrapper for OSS
+ */
+function aliyunoss_stream_wrappers() {
+  return array(
+    'oss' => array(
+      'name' => 'Aliyun OSS',
+      'class' => 'AliyunOSSStreamWrapper',
+      'description' => t('Aliyun Open Storage Service'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function aliyunoss_menu() {
+  $items = array();
+
+  $items['admin/config/media/aliyunoss'] = array(
+    'title' => 'Aliyun OSS',
+    'description' => 'Configure the Aliyun OSS Services settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('aliyunoss_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'aliyunoss.admin.inc',
+  );
+
+  return $items;
+}

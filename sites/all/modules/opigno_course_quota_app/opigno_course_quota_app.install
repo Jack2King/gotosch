@@ -1,0 +1,105 @@
+<?php
+
+/**
+ * @file
+ * Opigno course quota app install file
+ */
+
+/**
+ * Implements hook_install().
+ */
+function opigno_course_quota_app_install() {
+  if (module_exists('opigno')) {
+    // Add the quiz weight field.
+    $field = field_info_field('course_quota');
+    if (empty($field)) {
+      field_create_field(array(
+        'field_name' => 'course_quota',
+        'type' => 'number_integer',
+        'translatable' => TRUE
+      ));
+    }
+
+    $instance = field_info_instance('node', 'course_quota', 'course');
+    if (empty($instance)) {
+      field_create_instance(array(
+        'field_name' => 'course_quota',
+        'entity_type' => 'node',
+        'bundle' => 'course',
+        'label' => 'Number of allowed students',
+        'description' => "Number of allowed students (-1 for no limit).",
+        'required' => TRUE,
+        'default_value' => array(
+          0 => array(
+            'value' => -1,
+          ),
+        ),
+      ));
+    }
+  }
+
+  /* Default group permissions */
+  if (defined('OPIGNO_LMS_COURSE_STUDENT_ROLE')) {
+    og_invalidate_cache();
+    $course_student = opigno_lms_get_role_id(OPIGNO_LMS_COURSE_STUDENT_ROLE);
+    og_role_grant_permissions($course_student, array('count user for quota'));
+  }
+
+  /* Existing group permissions */
+  $existing_courses = opigno_course_quota_app_get_all_courses();
+  foreach ($existing_courses as $courseid => $course) {
+    $roles = og_roles("node", "course", $courseid, $force_group = FALSE, $include_all = TRUE);
+    foreach ($roles as $index => $role) {
+      if ($role == 'student') {
+        og_role_grant_permissions($index, array(
+          'count user for quota',
+        ));
+      }
+    }
+  }
+
+  if (function_exists('opigno_lms_refresh_strings_and_import')) {
+    opigno_lms_refresh_strings_and_import(array('field'));
+  }
+}
+
+
+function opigno_course_quota_app_update_7104() {
+  /* Default group permissions */
+  if (defined('OPIGNO_LMS_COURSE_STUDENT_ROLE')) {
+    og_invalidate_cache();
+    $course_student = opigno_lms_get_role_id(OPIGNO_LMS_COURSE_STUDENT_ROLE);
+    og_role_grant_permissions($course_student, array('count user for quota'));
+  }
+
+  /* Existing group permissions */
+  $existing_courses = opigno_course_quota_app_get_all_courses();
+  foreach ($existing_courses as $courseid => $course) {
+    $roles = og_roles("node", "course", $courseid, $force_group = FALSE, $include_all = TRUE);
+    foreach ($roles as $index => $role) {
+      if ($role == 'student') {
+        og_role_grant_permissions($index, array(
+          'count user for quota',
+        ));
+      }
+    }
+  }
+}
+
+/*
+ *
+ * Node_load_multiple is to heavy
+ *
+ */
+function opigno_course_quota_app_get_all_courses() {
+  $courses = array();
+  $query = db_select('node', 'n');
+  $query->fields('n', array('nid'));
+  $query->condition('n.type', "course", '=');
+  $result = $query->execute();
+  while (
+  $record = $result->fetchAssoc()) {
+    $courses[$record['nid']] = $record['nid'];
+  }
+  return $courses;
+}

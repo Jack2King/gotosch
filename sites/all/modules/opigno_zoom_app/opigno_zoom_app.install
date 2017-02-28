@@ -1,0 +1,365 @@
+<?php
+/**
+ * @file
+ * Opigno zoom app install file
+ *
+ * @author milton
+ */
+
+
+function opigno_zoom_app_update_og_group_ref() {
+  if (module_exists("entityreference_prepopulate"))
+  {
+    $instance = field_info_instance('node', 'og_group_ref', 'zoom_video_conference');
+    if (!empty($instance)) {
+      $instance['default_value_function'] = 'entityreference_prepopulate_field_default_value';
+      $instance['settings']['behaviors']['prepopulate']=array(
+        'action' => 'none',
+        'action_on_edit' => 0,
+        'fallback' => 'none',
+        'og_context' => 0,
+        'skip_perm' => 0,
+        'status' => 1,
+      );
+      field_update_instance($instance);
+    }
+  }
+}
+
+function opigno_zoom_app_install_default_permissions()
+{
+  $administrator = user_role_load_by_name('administrator');
+  $administrator_permissions = array(
+    'create zoom_video_conference content',
+    'edit own zoom_video_conference content',
+    'edit any zoom_video_conference content',
+    'delete own zoom_video_conference content',
+    'delete any zoom_video_conference content',
+    'register meeting attendance',
+  );
+  user_role_grant_permissions($administrator->rid, $administrator_permissions);
+
+  $student_manager = user_role_load_by_name('student manager');
+  $student_manager_permissions = array(
+    'create zoom_video_conference content',
+    'edit own zoom_video_conference content',
+    'delete own zoom_video_conference content',
+    'register meeting attendance',
+  );
+  user_role_grant_permissions($student_manager->rid, $student_manager_permissions);
+
+  /* Default permission */
+  og_invalidate_cache();
+  $roles = og_roles("node", "course", $gid = 0, $force_group = FALSE, $include_all = TRUE);
+  foreach ($roles as $index => $role) {
+    switch ($role) {
+      case 'student':
+        og_role_grant_permissions($index, array(
+          'attend meetings',
+        ));
+        break;
+      case 'coach':
+        og_role_grant_permissions($index, array(
+          'start meetings',
+        ));
+        og_role_grant_permissions($index, array(
+          'attend meetings',
+        ));
+        og_role_grant_permissions($index, array(
+          'register meeting attendance',
+        ));
+        og_role_grant_permissions($index, array(
+          'create zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'update own zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'delete own zoom_video_conference content',
+        ));
+        break;
+      case "teacher":
+        og_role_grant_permissions($index, array(
+          'start meetings',
+        ));
+        og_role_grant_permissions($index, array(
+          'attend meetings',
+        ));
+        og_role_grant_permissions($index, array(
+          'register meeting attendance',
+        ));
+        og_role_grant_permissions($index, array(
+          'create zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'update own zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'delete own zoom_video_conference content',
+        ));
+        break;
+      case "forum moderator":
+        og_role_grant_permissions($index, array(
+          'attend meetings',
+        ));
+        break;
+      case "manager":
+        og_role_grant_permissions($index, array(
+          'start meetings',
+        ));
+        og_role_grant_permissions($index, array(
+          'attend meetings',
+        ));
+        og_role_grant_permissions($index, array(
+          'register meeting attendance',
+        ));
+        og_role_grant_permissions($index, array(
+          'create zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'update own zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'delete own zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'update any zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'delete any zoom_video_conference content',
+        ));
+        break;
+    }
+  }
+}
+
+/**
+ * Implements hook_schema().
+ */
+function opigno_zoom_app_schema() {
+  return array(
+    'opigno_zoom_attendance' => array(
+      'fields' => array(
+        'zoom_id' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'score' => array(
+          'type' => 'int',
+          'not null' => TRUE,
+          'default' => '0',
+        ),
+        'status' => array(
+          'type' => 'int',
+          'not null' => TRUE,
+          'default' => '0',
+        ),
+        'uid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+      ),
+      'indexes' => array(
+        'zoom_id' => array('zoom_id'),
+        'zoom_user_id' => array('uid'),
+      ),
+    ),
+  );
+}
+
+function opigno_zoom_app_update_7101() {
+
+  $field = field_info_field('meeting_dates');
+  if (empty($field)) {
+    field_create_field(array(
+      'active' => 1,
+      'cardinality' => -1,
+      'deleted' => 0,
+      'entity_types' => array(),
+      'field_name' => 'meeting_dates',
+      'foreign keys' => array(),
+      'indexes' => array(),
+      'locked' => 0,
+      'module' => 'date',
+      'settings' => array(
+        'cache_count' => 4,
+        'cache_enabled' => 0,
+        'granularity' => array(
+          'day' => 'day',
+          'hour' => 'hour',
+          'minute' => 'minute',
+          'month' => 'month',
+          'second' => 0,
+          'year' => 'year',
+        ),
+        'repeat' => 1,
+        'timezone_db' => 'UTC',
+        'todate' => 'required',
+        'tz_handling' => 'site',
+      ),
+      'translatable' => 0,
+      'type' => 'datetime',
+    ));
+  }
+
+  $instance = field_info_instance('node', 'meeting_dates', 'zoom_video_conference');
+  if (empty($instance)) {
+    field_create_instance(array(
+      'bundle' => 'zoom_video_conference',
+      'deleted' => 0,
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'date',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 8,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'meeting_dates',
+      'label' => 'zoom video conference dates',
+      'required' => 0,
+      'settings' => array(
+        'default_value' => 'now',
+        'default_value2' => 'same',
+        'default_value_code' => '',
+        'default_value_code2' => '',
+        'user_register_form' => FALSE,
+      ),
+      'widget' => array(
+        'active' => 1,
+        'module' => 'date',
+        'settings' => array(
+          'increment' => 15,
+          'input_format' => 'm/d/Y - H:i:s',
+          'input_format_custom' => '',
+          'label_position' => 'above',
+          'repeat_collapsed' => 1,
+          'text_parts' => array(),
+          'year_range' => '-3:+3',
+        ),
+        'type' => 'date_popup',
+        'weight' => 32,
+      ),
+    ));
+  }
+
+  $schema['opigno_zoom_attendance'] = array(
+    'fields' => array(
+      'zoom_id' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'score' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => '0',
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+    ),
+    'indexes' => array(
+      'zoom_id' => array('zoom_id'),
+      'zoom_user_id' => array('uid'),
+    ),
+  );
+  db_create_table('opigno_zoom_attendance', $schema['opigno_zoom_attendance']);
+
+  $administrator = user_role_load_by_name('administrator');
+  $administrator_permissions = array(
+    'create zoom_video_conference content',
+    'edit own zoom_video_conference content',
+    'edit any zoom_video_conference content',
+    'delete own zoom_video_conference content',
+    'delete any zoom_video_conference content',
+  );
+  user_role_grant_permissions($administrator->rid, $administrator_permissions);
+
+  $student_manager = user_role_load_by_name('student manager');
+  $student_manager_permissions = array(
+    'create zoom_video_conference content',
+    'edit own zoom_video_conference content',
+    'delete own zoom_video_conference content',
+  );
+  user_role_grant_permissions($student_manager->rid, $student_manager_permissions);
+
+  /* Default permission */
+  og_invalidate_cache();
+  $roles = og_roles("node", "course", $gid = 0, $force_group = FALSE, $include_all = TRUE);
+  foreach ($roles as $index => $role) {
+    switch ($role) {
+      case 'coach':
+        og_role_grant_permissions($index, array(
+          'register meeting attendance',
+        ));
+        og_role_grant_permissions($index, array(
+          'create zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'update own zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'delete own zoom_video_conference content',
+        ));
+        break;
+      case "teacher":
+        og_role_grant_permissions($index, array(
+          'register meeting attendance',
+        ));
+        og_role_grant_permissions($index, array(
+          'create zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'update own zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'delete own zoom_video_conference content',
+        ));
+        break;
+      case "forum moderator":
+        og_role_grant_permissions($index, array(
+          'attend meetings',
+        ));
+        break;
+      case "manager":
+        og_role_grant_permissions($index, array(
+          'register meeting attendance',
+        ));
+        og_role_grant_permissions($index, array(
+          'create zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'update own zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'delete own zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'update any zoom_video_conference content',
+        ));
+        og_role_grant_permissions($index, array(
+          'delete any zoom_video_conference content',
+        ));
+        break;
+    }
+  }
+}

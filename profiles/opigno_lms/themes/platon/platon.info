@@ -1,0 +1,46 @@
+name = Platon
+description = Opigno LMS default theme. Fully responsive, HTML5 theme.
+core = 7.x
+
+settings[platon_use_home_page_background] = 0
+settings[platon_home_page_image_path] = ""
+
+stylesheets[all][] = css/font-awesome.min.css
+stylesheets[all][] = css/reset.css
+stylesheets[all][] = css/hacks.css
+stylesheets[all][] = css/styles.css
+stylesheets[all][] = css/color.css
+stylesheets[all][] = css/custom.css
+stylesheets[all][] = css/front.css
+
+scripts[] = js/vendor/modernizr/modernizr.min.js
+scripts[] = js/platon.js
+scripts[] = js/jquery.counterup.js
+scripts[] = js/waypoints.js
+scripts[] = js/custom.js
+
+regions[contact] = Contact
+regions[login] = Login
+regions[menu] = Menu
+regions[help] = Help
+regions[header_login] = Login header
+regions[sidebar_first] = First sidebar
+regions[content] = Content
+regions[slideshow] = Slide show
+regions[service] = Service
+regions[about] = About
+regions[counter] = Counter
+regions[features] = Features
+regions[content_bottom] = Bottom of content
+regions[footer_firstcolumn] = Footer first column
+regions[footer_secondcolumn] = Footer second column
+regions[footer_thirdcolumn] = Footer third column
+regions[footer_fourthcolumn] = Footer fourth column
+regions[footer] = Footer
+
+; Information added by Drupal.org packaging script on 2017-01-27
+version = "7.x-3.15"
+core = "7.x"
+project = "platon"
+datestamp = "1485551889"
+

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the from_123_nodes_roles_profiles_taxonomy feature.
+ */
+
+include_once 'from_123_nodes_roles_profiles_taxonomy.features.inc';

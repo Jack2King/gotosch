@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * gotosch Events Pages module.
+ */
+
+include_once 'gotosch_events_pages.features.inc';
