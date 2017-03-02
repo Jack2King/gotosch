@@ -249,9 +249,9 @@ $databases = array (
   array (
     'default' => 
     array (
-      'database' => 'opigno124',
+      'database' => 'gotosch',
       'username' => 'root',
-      'password' => 'lms2016ra',
+      'password' => 'root',
       'host' => 'localhost',
       'port' => '',
       'driver' => 'mysql',

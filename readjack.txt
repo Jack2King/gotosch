@@ -1,0 +1,22 @@
+1.默认不会提及default下面的files文件夹和settings.php
+2.在本地需要自己新建files和复制default.settings.php文件为settings.php
+   在settings.php里面设置数据库连接配置
+   我本地的数据配置信息如下
+   $databases = array (
+   'default' =>
+     array (
+      'default' =>
+        array (
+         'database' => 'gotosch',
+         'username' => 'root',
+         'password' => 'root',
+         'host' => 'localhost',
+         'port' => '',
+         'driver' => 'mysql',
+         'prefix' => '',
+        ),
+     ),
+   );
+   仅供参考，具体情况根据个人本地数据配置数据库名称和密码
+   
+3.原始files文件夹我压缩之后放到百度云  地址：
